@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>BLOG APP</title>
+		<link rel="stylesheet" type="text/css" href="/stylesheets/Semantic-UI-CSS-master/semantic.css">
+		<link rel="stylesheet" type="text/css" href="/stylesheets/app.css">
+	</head>
+	<body>
+		<div class="ui fixed inverted menu">
+			<div class="ui container">
+				<div class="header item"><i class="blogger icon"></i>BLOG SITE</div>
+				<a href="/" class="item">Home</a>
+				<% if(currentUser){%>
+				<a href="/blogs/new" class="item">New Post</a>
+				<% } %>
+				<div class="right menu">
+					<% if(!currentUser){ %>
+					<a href="/login" class="ui item">Log-in</a>
+					<a href="/register" class="ui item">Signup</a>
+					<% }else{ %>
+					<a href="#" class="ui item">Hello <%=currentUser.username%>!</a>
+					<a href="/logout" class="ui item">Log-out</a>
+					<% } %> 
+				</div>
+			</div>
+		</div>
+		<div class="ui main text container">
+			<% if(error && error.length > 0){ %>
+				<div class="ui mini red message" role="alert"><%= error %></div>
+			<% } %>
+			<% if(success && success.length > 0){ %>
+			<div class="ui mini green message" role="alert"><%= success %></div>
+			<% } %>

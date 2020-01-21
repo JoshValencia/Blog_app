@@ -1,0 +1,11 @@
+<%-include('partials/header.ejs')%>
+    <div class="ui huge header">
+        Log-in
+    </div>
+    <form action="/login" method="POST">
+        <input type="text" name="username" placeholder="username">
+        <input type="password" name="password" placeholder="password">
+        <button>Submit</button>
+    </form>
+</div>
+<%-include('partials/footer.ejs')%>

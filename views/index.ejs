@@ -1,0 +1,36 @@
+<%-include("partials/header.ejs")%>
+	<div class="ui huge header"><h1>BLOG POSTS</h1></div>
+	<span class="ui top attached">
+		<span class="ui divided items">
+			<% blogs.forEach(function(blog){ %>
+				<span class="item">
+					<div class="image">
+						<% var file = blog.image %>
+						<% if(file.match(".jpg") || file.match(".jpeg") || file.match(".gif") || file.match(".png")){ %>
+							<img src="./uploads/<%=blog.image%>">
+						<% } %>
+						<% if(file.match(".mp4") || file.match(".mov") || file.match(".flv") || file.match(".avi") || file.match(".mwv")){ %>
+							<video style="display: block;width: 100%;height: auto;border-radius: 0.125rem;border: none;">
+								<source src="./uploads/<%=blog.image%>">
+							</video>
+						<% } %>
+					</div>
+					<div class="content"><a class="header" href="/blogs/<%=blog._id%>"><%=blog.title%></a>
+						<div class="meta">
+							<span><i>Created By <%=blog.author.username%> on <%=blog.created.toDateString()%></i></span>
+						</div>
+						<div class="description">
+							<p><%-blog.body.substring(0,200)%>...</p>
+						</div>
+						<div class="extras">
+							<a class="ui floated basic violet button" href="/blogs/<%=blog._id%>">Read More<i class="chevron circle right icon"></i></a>
+						</div>
+					</div>
+				</span>	
+			<%}); %>
+		</span>
+	</span>
+</div>
+
+
+<%-include("partials/footer.ejs")%>

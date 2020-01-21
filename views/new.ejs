@@ -1,0 +1,19 @@
+<%-include("partials/header.ejs")%>
+	<div class="ui huge header">New Blog</div>
+	<form action="/blogs" method="POST" class="ui form" enctype="multipart/form-data">
+		<div class="fields">
+			<label for="title">Title</label>
+			<input id="title" type="text" name="blog[title]" placeholder="title">
+		</div>
+		<div class="fields">
+			<label for="image">Image|Video</label>
+			<input id="image" type="file" name="file">
+		</div>
+		<div class="fields">
+			<label for="content">Blog Content</label>
+			<textarea id="content" name="blog[body]" required></textarea>
+		</div>
+		<input class="ui violet basic button" type="submit">
+	</form>
+</div>
+<%-include("partials/footer.ejs")%>

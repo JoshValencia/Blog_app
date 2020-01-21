@@ -16,7 +16,7 @@ const express 				= require('express'),
 
 //					APP CONFIGURATIONS
 //=============================================================
-mongoose.connect("mongodb://localhost:27017/restful_blog_app",{
+mongoose.connect("mongodb+srv://dbUser:@joshV10142220@cluster0-9v3yh.mongodb.net/test?retryWrites=true&w=majority",{
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
 	useFindAndModify: false

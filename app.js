@@ -260,7 +260,6 @@ app.put('/blogs/:id',checkBlogOwnerShip,upload,function(req,res){
 
 app.delete('/blogs/:id',checkBlogOwnerShip,function(req,res){
 	Blog.findByIdAndRemove(req.params.id,function(err,updatedBlog){
-		console.log(updatedBlog);
 		if(err){
 			res.redirect('/blogs');
 		}else{

@@ -11,7 +11,8 @@ const express 				= require('express'),
 	  LocalStrategy 		= require('passport-local'),
 	  passportLocalMongoose = require('passport-local-mongoose'),
 	  methodOverride 		= require('method-override'),
-	  expressSanitizer 		= require('express-sanitizer')
+	  expressSanitizer 		= require('express-sanitizer'),
+	  fs					= require('fs')
 
 
 //					APP CONFIGURATIONS
@@ -259,9 +260,17 @@ app.put('/blogs/:id',checkBlogOwnerShip,upload,function(req,res){
 
 app.delete('/blogs/:id',checkBlogOwnerShip,function(req,res){
 	Blog.findByIdAndRemove(req.params.id,function(err,updatedBlog){
+		console.log(updatedBlog);
 		if(err){
 			res.redirect('/blogs');
 		}else{
+			fs.unlink('./public/uploads/'+updatedBlog.image, err => {
+				if(err){
+					console.log(err);
+				}else{
+					console.log("file successfully deleted!");
+				}
+			})
 			res.redirect('/blogs');
 		}
 	});

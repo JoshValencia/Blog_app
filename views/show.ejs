@@ -16,15 +16,18 @@
 				<span><strong>Submitted By:</strong> <%=blog.author.username%></span>
 			</div>
 			<hr>
+			<% if(currentUser && blog.author.id.equals(currentUser._id)){ %>
+				<div class="ui buttons">
+					<a class="ui blue button" href="/blogs/<%=blog._id%>/edit">EDIT</a>
+					<div class="or"></div>
+					<form method="POST" action="/blogs/<%=blog._id%>?_method=DELETE">
+						<button class="ui red button" type="submit">DELETE</button>
+					</form>
+				</div>
+			<% } %>
 			<div class="description">
 				<p><%-blog.body%></p>
 			</div>
-			<% if(currentUser && blog.author.id.equals(currentUser._id)){ %>
-				<a class="ui blue button" href="/blogs/<%=blog._id%>/edit">EDIT</a>
-				<form method="POST" action="/blogs/<%=blog._id%>?_method=DELETE">
-				<button class="ui red button" type="submit">DELETE</button>
-				</form>
-			<% } %>
 			<div class="ui comments">
 				<h3 class="ui dividing header">Comments</h3>
 				<% if(blog.comments.length === 0){ %>
@@ -49,11 +52,12 @@
 							  <div class="text">
 								<%= comment.text %>
 								<% if(currentUser && comment.author.id.equals(currentUser._id)){ %>
-								<br>
-								<a class="ui blue basic button" href="/blogs/<%= blog._id %>/comments/<%= comment._id %>/edit">Edit</a>
-								<form method="POST" action="/blogs/<%= blog._id %>/comments/<%= comment._id %>/delete?_method=DELETE">
-									<button class="ui red basic button" type="submit">DELETE</button>
-								</form>
+								<div class="mini ui right floated buttons">
+									<a class="ui blue basic button" href="/blogs/<%= blog._id %>/comments/<%= comment._id %>/edit">Edit</a>
+									<form method="POST" action="/blogs/<%= blog._id %>/comments/<%= comment._id %>/delete?_method=DELETE">
+										<button class="ui red basic button" type="submit">DELETE</button>
+									</form>
+								</div>
 								<% } %>
 							  </div>
 							</div>

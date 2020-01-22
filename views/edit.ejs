@@ -1,19 +1,19 @@
 <%-include("partials/header.ejs")%>
 	<div class="ui huge header">Edit <%=blog.title%></div>
 	<form method="POST" class="ui form" action="/blogs/<%=blog._id%>?_method=PUT" enctype="multipart/form-data">
-		<div class="fields">
-			<label for="title">Title</label>
-			<input id="title" type="text" name="blog[title]" value="<%=blog.title%>">
+		<div class="field">
+			<label>Title</label>
+			<input type="text" name="blog[title]" value="<%=blog.title%>">
 		</div>
-		<div class="fields">
-			<label for="image">Image</label>
-			<input id="image" type="file" name="file">
+		<div class="field">
+			<label>Image</label>
+			<input type="file" name="file">
 		</div>
-		<div class="fields">
-			<label for="content">Blog Content</label>
-			<textarea id="content" name="blog[body]" required><%=blog.body%></textarea>
+		<div class="field">
+			<label>Blog Content</label>
+			<textarea name="blog[body]" required><%=blog.body%></textarea>
 		</div>
-		<input class="ui violet basic button" type="submit">
+		<button class="ui violet basic button" type="submit">Submit</button>
 	</form>
 </div>
 <%-include("partials/footer.ejs")%>

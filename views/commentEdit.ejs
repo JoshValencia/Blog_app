@@ -1,11 +1,11 @@
 <%-include("partials/header.ejs")%>
 	<div class="ui huge header">Edit Comment</div>
 	<form action="/blogs/<%= blog_id %>/comments/<%= comment._id %>/edited?_method=PUT" method="POST" class="ui form">
-		<div class="fields">
-			<label for="content">Comment</label>
-			<textarea id="content" name="comment[text]" required><%= comment.text %></textarea>
+		<div class="field">
+			<label>Comment</label>
+			<textarea name="comment[text]" required><%= comment.text %></textarea>
 		</div>
-		<input class="ui violet basic button" type="submit">
+		<button class="ui violet basic button" type="submit">Submit</button>
 	</form>
 </div>
 <%-include("partials/footer.ejs")%>

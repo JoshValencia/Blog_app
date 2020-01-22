@@ -2,10 +2,16 @@
     <div class="ui huge header">
         Log-in
     </div>
-    <form action="/login" method="POST">
-        <input type="text" name="username" placeholder="username">
-        <input type="password" name="password" placeholder="password">
-        <button>Submit</button>
+    <form class="ui form" action="/login" method="POST">
+        <div class="field">
+            <label>Username</label>
+            <input type="text" name="username" placeholder="username">
+        </div>
+        <div class="field">
+            <label>Password</label>
+            <input type="password" name="password" placeholder="password">
+        </div>
+        <button class="ui blue button">Submit</button>
     </form>
 </div>
 <%-include('partials/footer.ejs')%>

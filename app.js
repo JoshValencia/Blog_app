@@ -16,7 +16,7 @@ const express 				= require('express'),
 
 //					APP CONFIGURATIONS
 //=============================================================
-mongoose.connect("mongodb+srv://dbUser:@joshV10142220@cluster0-9v3yh.mongodb.net/test?retryWrites=true&w=majority",{
+mongoose.connect("mongodb://localhost:27017/restful_blog_app",{
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
 	useFindAndModify: false
@@ -230,16 +230,25 @@ app.get('/blogs/:id',function(req,res){
 
 app.get('/blogs/:id/edit',checkBlogOwnerShip,function(req,res){
 		Blog.findById(req.params.id,function(err,foundBlog){
-			res.render("edit",{blog:foundBlog});
+			if(err){
+				req.flash("error", err)
+			}else{
+				res.render("edit",{blog:foundBlog});
+			}
 		});
 })
 
-app.put('/blogs/:id',checkBlogOwnerShip,function(req,res){
+app.put('/blogs/:id',checkBlogOwnerShip,upload,function(req,res){
 	var title = req.body.blog.title;
 	var image = req.file.filename;
-	var body = req.sanitize(req.body.blog.body);
-	var newBlog = {title:title,image:image,body:body};
-	Blog.findByIdAndUpdate(req.params.id,req.body.blog,function(err,updatedBlog){
+	var body = req.body.blog.body;
+	var author = {
+		id: req.user._id,
+		username: req.user.username
+	};
+	body = req.sanitize(req.body.blog.body);
+	var newBlog = {title:title,image:image,body:body,author:author};
+	Blog.findByIdAndUpdate(req.params.id,newBlog,function(err,updatedBlog){
 		if(err){
 			res.redirect('/blogs');
 		}else{

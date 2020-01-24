@@ -1,0 +1,70 @@
+<%-include("partials/header.ejs")%>
+
+<h1 class="ui huge header"><%=user.username%>'s Profile Page</h1>
+<div class="ui centered fluid card">
+    <div class="image">
+        <img src="/uploads/<%=currentUser.image%>">
+    </div>
+    <div class="content">
+      <a class="header"><%= user.fullname%></a>
+      <div class="meta">
+        <span class="date">Joined in <%= user.createdAt.toDateString() %></span>
+      </div>
+      <div class="description">
+        <% if(user.bio.length != 0){ %>
+            <%= user.bio %>
+        <%}else{%>
+            There's no bio available!
+        <%}%>
+      </div>
+    </div>
+  </div>
+        <div class="ui large header">Blog Post's</div>
+        <%if(blogs.length === 0){ %>
+        <h4 class="ui header">
+            Nothing to show
+        </h4>
+        <% }else{ %>
+        <div class="ui cards">
+         <% blogs.forEach(function(blog){ %>
+            <div class="card">
+                <div class="content">
+                <div class="right floated meta"><%=blog.created.toDateString()%></div>
+                <img class="ui avatar image" src="/uploads/<%=user.image%>"> <%=blog.author.username%>
+                </div>
+                <div class="image">
+                    <% var file = blog.image %>
+                    <% if(file.match(".jpg") || file.match(".jpeg") || file.match(".gif") || file.match(".png")){ %>
+                        <img class="ui tiny image" src="/uploads/<%=blog.image%>">
+                    <% } %>
+                    <% if(file.match(".mp4") || file.match(".mov") || file.match(".flv") || file.match(".avi") || file.match(".mwv")){ %>
+                        <video class="ui tiny image" style="display: block;width: 100%;height: auto;border-radius: 0.125rem;border: none;"> 
+                            <source src="./uploads/<%=blog.image%>">
+                        </video>
+                    <% } %>
+                </div>
+                <!-- <div class="content">
+                <i class="comment icon"></i>
+                <%if(blog.comments.length != 0 && blog.comments){%>
+                <%=blog.comments.length%> comment<%if(blog.comments.length>1){%>s<%}%>
+                <%}else{%>
+                    No Comment Available
+                <%}%>
+                </div> -->
+                <div class="extra content">
+                <div class="ui large transparent left icon input">
+                    <a class="ui floated basic violet button" href="/blogs/<%=blog._id%>">Read More<i class="chevron circle right icon"></i></a>
+                </div>
+                </div>
+            </div>
+            <%}); %>
+        </div>
+        <%}%>
+
+
+
+</div>
+
+
+
+<%-include("partials/footer.ejs")%>

@@ -22,7 +22,7 @@
 					<a href="/login" class="ui item">Log-in</a>
 					<a href="/register" class="ui item">Signup</a>
 					<% }else{ %>
-					<a href="#" class="ui item">Hello <%=currentUser.username%>!</a>
+					<a href="/profile/<%=currentUser._id%>" class="ui item">Hello <%=currentUser.username%>!</a>
 					<a href="/logout" class="ui item">Log-out</a>
 					<% } %> 
 				</div>

@@ -12,7 +12,7 @@ var blogSchema = new mongoose.Schema({
         username: String
     },
 	comments: [
-        {
+         {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Comments"
         }

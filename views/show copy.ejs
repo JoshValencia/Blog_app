@@ -42,10 +42,10 @@
 					<% blog.comments.forEach(function(comment){ %>
 						<div class="comment">
 							<a class="avatar">
-								<img src="/uploads/<%=comment.author.image%>">
+							  <img src="/images/avatar/small/matt.jpg">
 							</a>
 							<div class="content">
-							  <a class="author" href="/profile/view/<%= comment.author.id %>"><%= comment.author.username %></a>
+							  <a class="author"><%= comment.author.username %></a>
 							  <div class="metadata">
 								<span class="date"><%= comment.created.toDateString() %> <%= comment.created.toLocaleTimeString() %></span>
 							  </div>
@@ -68,7 +68,7 @@
 				  <div class="field" >
 					<textarea name="comment[text]"></textarea>
 				  </div>
-				  <button id="addComment" class="ui blue labeled submit icon button">
+				  <button class="ui blue labeled submit icon button">
 					<i class="icon edit"></i> Add Comment
 				  </button>
 				</form>

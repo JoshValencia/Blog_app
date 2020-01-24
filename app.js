@@ -14,7 +14,6 @@ const express 				= require('express'),
 	  expressSanitizer 		= require('express-sanitizer'),
 	  fs					= require('fs')
 
-
 //					APP CONFIGURATIONS
 //=============================================================
 mongoose.connect("mongodb://localhost:27017/restful_blog_app",{
@@ -53,6 +52,8 @@ var Comments = require('./models/comments');
 var Blog = require('./models/blog');
 
 var User = require('./models/user');
+
+// var Profile = require('./models/profile');
 
 //SEEDING
 // seedDB();
@@ -100,6 +101,16 @@ function isLoggedIn(req, res, next){
 	res.redirect('/login');
 }
 //AUTHORIZATION FUNCTION=====================================================================
+function checkProfileOwnerShip(req,res,next){
+	if(req.user._id.equals(req.params.id)){
+		return next();
+	}else{
+		req.flash("error","The Profile You are trying to access is not yours!");
+		res.redirect('/blogs');
+	}
+};
+
+
 function checkBlogOwnerShip(req,res,next){
 	if(req.isAuthenticated()){
 		Blog.findById(req.params.id,function(err,foundBlog){
@@ -146,19 +157,29 @@ app.get("/register",function(req,res){
 	res.render("register");
 });
 
-app.post("/register",function(req,res){
-	User.register(new User({username:req.body.username}),req.body.password, function(err,user){
+app.post("/register",upload,function(req,res){
+	var username = req.body.username;
+	var image = req.file.filename;
+	var email =req.body.email;
+	var fullname = req.body.fullname;
+	var age = req.body.age;
+	var location = req.body.location;
+	var gender = req.body.gender;
+	var bio = req.body.bio;
+	var newProfile = {username:username,image:image,email:email,fullname:fullname,age:age,location:location,gender:gender,bio:bio}
+	User.register(new User(newProfile),req.body.password, function(err,user){
 		if(err){
-			req.flash("error", err.message);
 			console.log(err);
+			req.flash("error", err.message);
 			return res.render("register");
 		}
 		passport.authenticate('local')(req,res, function(){
-			req.flash("success","Your Account has been Created Successfully! Welcome " + user.username);
-			res.redirect('/blogs');
-		})
+				console.log(user)
+				req.flash("success","Your Account has been Created Successfully! Welcome " + user.username);
+				res.redirect('/blogs');
+			});
+		});
 	});
-});
 //>>>LOG-IN ROUTES<<<||
 
 app.get('/login',function(req,res){
@@ -183,6 +204,56 @@ app.get('/logout',function(req,res){
 
 
 //-------------------------------------\\
+
+//===================PROFILE PAGE ROUTE===================\\
+
+app.get('/profile/:id',isLoggedIn,checkProfileOwnerShip,function(req,res){
+	User.findById(req.params.id, function(err, foundUser){
+		if(err){
+			req.flash("error", "Something went wrong!");
+			res.redirect('/');
+		}else{
+			Blog.find().where('author.id').equals(foundUser._id).exec(function(err, blog){
+			if(err){
+				req.flash("error", "Something went wrong!");
+				res.redirect('/');
+			}else{
+				res.render('profile', {blogs:blog})
+			}
+		})
+	}
+	})
+});
+
+app.get('/profile/view/:username',isLoggedIn,function(req,res){
+	User.findById(req.params.username,function(err,user){
+		if(err){
+			req.flash("error", "Something went wrong!");
+			res.redirect('/');
+		}else{
+			Blog.find().where('author.id').equals(user._id).exec(function(err, blog){
+				if(err){
+					req.flash("error", "Something went wrong!");
+					res.redirect('/');
+				}else{
+					res.render('profilepage', {blogs:blog,user:user});
+				}
+			})
+		}
+	})
+})
+
+
+
+
+
+
+
+
+
+
+
+//=========================================================\\
 
 app.get("/blogs",function(req,res){
 		Blog.find({},function(err,data){
@@ -214,9 +285,10 @@ app.post("/blogs",isLoggedIn,upload,function(req,res){
 			res.render("new");
 		}else{
 			res.redirect('/blogs');
+		}	
 		}
-	})
-})
+	);
+});
 
 
 app.get('/blogs/:id',function(req,res){
@@ -254,9 +326,9 @@ app.put('/blogs/:id',checkBlogOwnerShip,upload,function(req,res){
 			res.redirect('/blogs');
 		}else{
 			res.redirect('/blogs/'+req.params.id);
-		}
-	})
-})
+				}
+			});
+		});
 
 app.delete('/blogs/:id',checkBlogOwnerShip,function(req,res){
 	Blog.findByIdAndRemove(req.params.id,function(err,updatedBlog){
@@ -289,6 +361,7 @@ app.post('/blogs/:id/comments/new',isLoggedIn,function(req,res){
 				}else{
 					comment.author.id = req.user._id;
 					comment.author.username = req.user.username;
+					comment.author.image = req.user.image;
 					comment.save();
 					blog.comments.push(comment);
 					blog.save();

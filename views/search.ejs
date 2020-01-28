@@ -1,0 +1,43 @@
+<%-include("partials/header.ejs")%>
+
+<div class="ui items">
+<% userfullname.forEach(function(users){ %>
+    <div class="item">
+        <a class="ui tiny image">
+          <img src="/uploads/<%=users.image%>">
+        </a>
+        <div class="content">
+          <a class="header" href="/profile/view/<%= users._id %>"><%=users.fullname%></a>
+          <div class="description">
+            <p><%=users.bio%></p>
+          </div>
+        </div>
+      </div>
+<%})%>
+<% blogs.forEach(function(blog){ %>
+    <div class="item">
+        <a class="ui tiny image">
+          <img src="/uploads/<%=blog.image%>">
+        </a>
+        <div class="content">
+          <a class="header" href="/blogs/<%=blog._id%>"><%=blog.title%></a>
+          <div class="description">
+            <p><%-blog.body.substring(0,200)%>...</p>
+          </div>
+          <div class="extras">
+            <a class="ui floated basic violet button" href="/blogs/<%=blog._id%>">Read More<i class="chevron circle right icon"></i></a>
+          </div>
+        </div>
+      </div>
+<%})%>
+</div>
+
+
+
+
+
+
+
+
+
+<%-include("partials/footer.ejs")%>

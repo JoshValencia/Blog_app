@@ -152,6 +152,14 @@ function checkCommentOwnerShip(req,res,next){
 	};
 }
 
+//REGEX FUNCTION
+function escapeRegex(text){
+	return text.replace(/[-[\]{}()*+?.,\\^$!#\s]/g, "\\$&");
+};
+
+
+
+
 //>>>REGISTRATION ROUTES<<<<\\============================================================
 app.get("/register",function(req,res){
 	res.render("register");
@@ -247,13 +255,42 @@ app.get('/profile/view/:username',isLoggedIn,function(req,res){
 
 
 
+//================================SEARCH ROUTE=============================\\
+
+
+app.get('/search',isLoggedIn,function(req,res){
+	const regex = new RegExp(escapeRegex(req.query.search), 'gi');
+	Blog.find({title: regex},function(err, allBlog){
+		if(err){
+			console.log(err);
+		}else{
+			User.find({fullname: regex},function(err, allUserFullname){
+				if(err){
+					console.log(err);
+				}else{
+					if(allBlog.length < 1&&allUserFullname.length<1){
+						var noMatch = "No Match Found!"; 	
+						res.render('search2',{match: noMatch});
+					}else{
+						res.render('search',{userfullname:allUserFullname,blogs:allBlog});
+					}
+				}
+			})
+		}
+	});
+});
 
 
 
 
 
 
-//=========================================================\\
+
+
+
+
+
+//=============================MAIN ROUTES=============================\\
 
 app.get("/blogs",function(req,res){
 		Blog.find({},function(err,data){

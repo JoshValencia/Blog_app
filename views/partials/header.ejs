@@ -22,6 +22,14 @@
 					<a href="/login" class="ui item">Log-in</a>
 					<a href="/register" class="ui item">Signup</a>
 					<% }else{ %>
+						<div class="item">
+							<form action="/search" method="GET">
+							<div class="ui icon input">
+							  <input type="text" placeholder="Search..." name="search">
+							  <i class="search link icon"></i>
+							</div>
+							</form>
+						  </div>
 					<a href="/profile/<%=currentUser._id%>" class="ui item">Hello <%=currentUser.username%>!</a>
 					<a href="/logout" class="ui item">Log-out</a>
 					<% } %> 

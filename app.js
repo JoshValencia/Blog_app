@@ -1,5 +1,6 @@
 //		DECLARING VARIABLES AND REQUIRING PACKAGES & MODULES		
 //========================================================
+require('dotenv').config()
 const express 				= require('express'),
 	  path 					= require('path'),
 	  multer				= require('multer'),
@@ -12,15 +13,19 @@ const express 				= require('express'),
 	  passportLocalMongoose = require('passport-local-mongoose'),
 	  methodOverride 		= require('method-override'),
 	  expressSanitizer 		= require('express-sanitizer'),
+	  cloudinary            = require('cloudinary'), 
 	  fs					= require('fs')
 
 //					APP CONFIGURATIONS
 //=============================================================
-mongoose.connect("mongodb://localhost:27017/restful_blog_app",{
+
+//<<<<<< --------MONGODB ATLAS CONNECTION FOR ONLINE DEPLOYMENT------>>>>>>>>>>>>>
+mongoose.connect(process.env.MONGODB_URI||"localhost/restful_blog_app",{ 
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
 	useFindAndModify: false
 });
+//<<<<<< --------MONGODB ATLAS CONNECTION FOR ONLINE DEPLOYMENT------>>>>>>>>>>>>>
 
 app.use(require('express-session')({
 	secret: "Secret because it's secret",
@@ -69,7 +74,6 @@ passport.deserializeUser(User.deserializeUser());
 //							STORAGE ENGINE FOR FILES
 //==========================================================================
 var Storage = multer.diskStorage({
-	destination:"public/uploads/",
 	filename:(req,file,cb)=>{
 		cb(null,file.fieldname+"_"+Date.now()+path.extname(file.originalname));
 	}
@@ -166,25 +170,28 @@ app.get("/register",function(req,res){
 });
 
 app.post("/register",upload,function(req,res){
-	var username = req.body.username;
-	var image = req.file.filename;
-	var email =req.body.email;
-	var fullname = req.body.fullname;
-	var age = req.body.age;
-	var location = req.body.location;
-	var gender = req.body.gender;
-	var bio = req.body.bio;
-	var newProfile = {username:username,image:image,email:email,fullname:fullname,age:age,location:location,gender:gender,bio:bio}
-	User.register(new User(newProfile),req.body.password, function(err,user){
-		if(err){
-			console.log(err);
-			req.flash("error", err.message);
-			return res.render("register");
-		}
-		passport.authenticate('local')(req,res, function(){
-				console.log(user)
-				req.flash("success","Your Account has been Created Successfully! Welcome " + user.username);
-				res.redirect('/blogs');
+	cloudinary.uploader.upload(req.file.path, function(result) {
+		var username = req.body.username;
+		var image = req.file.filename;
+		var email =req.body.email;
+		var fullname = req.body.fullname;
+		var age = req.body.age;
+		var location = req.body.location;
+		var gender = req.body.gender;
+		var bio = req.body.bio;
+		image = result.secure_url;
+		var newProfile = {username:username,image:image,email:email,fullname:fullname,age:age,location:location,gender:gender,bio:bio}
+		User.register(new User(newProfile),req.body.password, function(err,user){
+			if(err){
+				console.log(err);
+				req.flash("error", err.message);
+				return res.render("register");
+			}
+			passport.authenticate('local')(req,res, function(){
+					console.log(user)
+					req.flash("success","Your Account has been Created Successfully! Welcome " + user.username);
+					res.redirect('/blogs');
+				});
 			});
 		});
 	});
@@ -308,6 +315,7 @@ app.get("/blogs/new",isLoggedIn, function(req,res){
 })
 
 app.post("/blogs",isLoggedIn,upload,function(req,res){
+	cloudinary.uploader.upload(req.file.path, function(result) {
 	var title = req.body.blog.title;
 	var image = req.file.filename;
 	var body = req.body.blog.body;
@@ -316,15 +324,18 @@ app.post("/blogs",isLoggedIn,upload,function(req,res){
 		username: req.user.username
 	};
 	body = req.sanitize(req.body.blog.body);
-	var newBlog = {title:title,image:image,body:body,author:author};
+	image = result.secure_url;
+	var imageId = req.body.blog.imageId;
+	imageId = result.public_id;
+	var newBlog = {title:title,image:image,imageId:imageId,body:body,author:author};
 	Blog.create(newBlog,function(err,blogSend){
 		if(err){
 			res.render("new");
 		}else{
 			res.redirect('/blogs');
 		}	
-		}
-	);
+		});
+	});
 });
 
 
@@ -349,37 +360,40 @@ app.get('/blogs/:id/edit',checkBlogOwnerShip,function(req,res){
 })
 
 app.put('/blogs/:id',checkBlogOwnerShip,upload,function(req,res){
-	var title = req.body.blog.title;
-	var image = req.file.filename;
-	var body = req.body.blog.body;
-	var author = {
-		id: req.user._id,
-		username: req.user.username
-	};
-	body = req.sanitize(req.body.blog.body);
-	var newBlog = {title:title,image:image,body:body,author:author};
-	Blog.findByIdAndUpdate(req.params.id,newBlog,function(err,updatedBlog){
+	Blog.findById(req.params.id, async function(err,updatedBlog){
 		if(err){
 			res.redirect('/blogs');
 		}else{
+			if(req.file){
+				try{
+					await cloudinary.v2.uploader.destroy(updatedBlog.imageId);	
+					var result = await cloudinary.v2.uploader.upload(req.file.path);
+					updatedBlog.imageId = result.public_id;
+					updatedBlog.image = result.secure_url;
+				}catch(err){
+					return res.redirect('/blogs');
+				}
+			}
+			updatedBlog.title = req.body.blog.title;
+			updatedBlog.body = req.body.blog.body;
+			updatedBlog.save();
 			res.redirect('/blogs/'+req.params.id);
 				}
 			});
 		});
 
 app.delete('/blogs/:id',checkBlogOwnerShip,function(req,res){
-	Blog.findByIdAndRemove(req.params.id,function(err,updatedBlog){
+	Blog.findById(req.params.id, async function(err,updatedBlog){
 		if(err){
 			res.redirect('/blogs');
 		}else{
-			fs.unlink('./public/uploads/'+updatedBlog.image, err => {
-				if(err){
-					console.log(err);
-				}else{
-					console.log("file successfully deleted!");
-				}
-			})
-			res.redirect('/blogs');
+			try{
+				await cloudinary.v2.uploader.destroy(updatedBlog.imageId);	
+				updatedBlog.remove();
+				res.redirect('/blogs');
+			}catch(err){
+				res.redirect('/blogs');
+			}
 		}
 	});
 });
@@ -450,6 +464,9 @@ app.delete('/blogs/:id/comments/:comment_id/delete',checkCommentOwnerShip,functi
 
 //						SERVER INITIALIZE AND LISTEN
 //====================================================================
-app.listen(3000,function(){
-	console.log("Server has started at PORT 3000");
+//--------<<server initialization with heroku variable>>--------
+const port = process.env.PORT || 3000;
+app.listen(port,()=>{
+    console.log('Server has started at PORT 3000');
 });
+//--------<<server initialization with heroku variable>>--------

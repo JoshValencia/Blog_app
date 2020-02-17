@@ -3,7 +3,7 @@
 <h1 class="ui huge header"><%=currentUser.username%>'s Profile Page</h1>
 <div class="ui centered fluid card">
     <div class="image">
-        <img src="/uploads/<%=currentUser.image%>">
+        <img src="<%=currentUser.image%>">
     </div>
     <div class="content">
       <a class="header"><%= currentUser.fullname%></a>
@@ -30,16 +30,16 @@
             <div class="card">
                 <div class="content">
                 <div class="right floated meta"><%=blog.created.toDateString()%></div>
-                <img class="ui avatar image" src="/uploads/<%=currentUser.image%>"> <%=blog.author.username%>
+                <img class="ui avatar image" src="<%=currentUser.image%>"> <%=blog.author.username%>
                 </div>
                 <div class="image">
                     <% var file = blog.image %>
                     <% if(file.match(".jpg") || file.match(".jpeg") || file.match(".gif") || file.match(".png")){ %>
-                        <img class="ui tiny image" src="/uploads/<%=blog.image%>">
+                        <img class="ui tiny image" src="<%=blog.image%>">
                     <% } %>
                     <% if(file.match(".mp4") || file.match(".mov") || file.match(".flv") || file.match(".avi") || file.match(".mwv")){ %>
                         <video class="ui tiny image" style="display: block;width: 100%;height: auto;border-radius: 0.125rem;border: none;"> 
-                            <source src="./uploads/<%=blog.image%>">
+                            <source src="<%=blog.image%>">
                         </video>
                     <% } %>
                 </div>

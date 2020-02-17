@@ -4,11 +4,11 @@
 		<div class="item">
 			<% var file = blog.image %>
 			<% if(file.match(".jpg") || file.match(".jpeg") || file.match(".gif") || file.match(".png")){ %>
-				<img class="ui centered rounded image" src="/uploads/<%=blog.image%>">
+				<img class="ui centered rounded image" src="<%=blog.image%>">
 			<% } %>
 			<% if(file.match(".mp4") || file.match(".mov") || file.match(".flv") || file.match(".avi") || file.match(".mwv")){ %>
 				<video class="ui centered rounded image" controls>
-					<source src="/uploads/<%=blog.image%>">
+					<source src="<%=blog.image%>">
 				</video>
 			<% } %>
 			<div class="content">
@@ -42,7 +42,7 @@
 					<% blog.comments.forEach(function(comment){ %>
 						<div class="comment">
 							<a class="avatar">
-								<img src="/uploads/<%=comment.author.image%>">
+								<img src="<%=comment.author.image%>">
 							</a>
 							<div class="content">
 							  <a class="author" href="/profile/view/<%= comment.author.id %>"><%= comment.author.username %></a>

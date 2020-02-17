@@ -4,7 +4,7 @@
 <% userfullname.forEach(function(users){ %>
     <div class="item">
         <a class="ui tiny image">
-          <img src="/uploads/<%=users.image%>">
+          <img src="<%=users.image%>">
         </a>
         <div class="content">
           <a class="header" href="/profile/view/<%= users._id %>"><%=users.fullname%></a>
@@ -17,7 +17,7 @@
 <% blogs.forEach(function(blog){ %>
     <div class="item">
         <a class="ui tiny image">
-          <img src="/uploads/<%=blog.image%>">
+          <img src="<%=blog.image%>">
         </a>
         <div class="content">
           <a class="header" href="/blogs/<%=blog._id%>"><%=blog.title%></a>

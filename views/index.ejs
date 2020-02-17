@@ -7,11 +7,11 @@
 					<div class="image">
 						<% var file = blog.image %>
 						<% if(file.match(".jpg") || file.match(".jpeg") || file.match(".gif") || file.match(".png")){ %>
-							<img src="./uploads/<%=blog.image%>">
+							<img src="<%=blog.image%>">
 						<% } %>
 						<% if(file.match(".mp4") || file.match(".mov") || file.match(".flv") || file.match(".avi") || file.match(".mwv")){ %>
 							<video style="display: block;width: 100%;height: auto;border-radius: 0.125rem;border: none;">
-								<source src="./uploads/<%=blog.image%>">
+								<source src="<%=blog.image%>">
 							</video>
 						<% } %>
 					</div>
